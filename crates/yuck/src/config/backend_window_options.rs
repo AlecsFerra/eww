@@ -24,6 +24,7 @@ mod backend {
         pub sticky: bool,
         pub window_type: WindowType,
         pub struts: StrutDefinition,
+        pub focusable: bool,
     }
 
     impl BackendWindowOptions {
@@ -35,6 +36,7 @@ mod backend {
                 window_type: window_type.unwrap_or_default(),
                 sticky: attrs.primitive_optional("sticky")?.unwrap_or(true),
                 struts: struts.unwrap_or_default(),
+                focusable: attrs.primitive_optional("focusable")?.unwrap_or(false),
             })
         }
     }

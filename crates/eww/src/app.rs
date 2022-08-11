@@ -419,6 +419,13 @@ fn initialize_window(
 
     window.show_all();
 
+    #[cfg(feature = "x11")]
+    {
+        if window_def.backend_options.focusable {
+            display_backend::force_focus(&window)?;
+        }
+    }
+
     Ok(EwwWindow { name: window_def.name.clone(), definition: window_def, gtk_window: window, scope_index: window_scope })
 }
 

@@ -131,6 +131,12 @@ mod platform {
         Ok(())
     }
 
+    pub fn force_focus(window: &gtk::Window) -> Result<()> {
+        let backend = X11Backend::new()?;
+        backend.force_focus(window)?;
+        Ok(())
+    }
+
     struct X11Backend {
         conn: RustConnection<DefaultStream>,
         root_window: u32,
@@ -220,6 +226,14 @@ mod platform {
             )?
             .check()?;
 
+            self.conn.flush().context("Failed to send requests to X server")
+        }
+
+        fn force_focus(&self, window: &gtk::Window) -> Result<()> {
+            let gdk_window = window.window().context("Couldn't get gdk window from gtk window")?;
+            let win_id =
+                gdk_window.downcast_ref::<gdkx11::X11Window>().context("Failed to get x11 window for gtk window")?.xid() as u32;
+            self.conn.set_input_focus(InputFocus::PARENT, win_id, x11rb::CURRENT_TIME)?;
             self.conn.flush().context("Failed to send requests to X server")
         }
     }
